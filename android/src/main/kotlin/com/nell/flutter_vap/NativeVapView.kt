@@ -35,19 +35,28 @@ internal class NativeVapView(binaryMessenger: BinaryMessenger, context: Context,
         vapView.setAnimListener(object : IAnimListener {
             override fun onFailed(errorType: Int, errorMsg: String?) {
                 GlobalScope.launch(Dispatchers.Main) {
-                    methodResult?.success(HashMap<String, String>().apply {
-                        put("status", "failure")
-                        put("errorMsg", errorMsg ?: "unknown error")
-                    })
+                    methodResult?.let{
+                        val map = HashMap<String, String>().apply {
+                            put("status", "failure")
+                            put("errorMsg", errorMsg ?: "unknown error")
+                        }
+                        it.success(map)
+                        methodResult = null
+                    }
+
 
                 }
             }
 
             override fun onVideoComplete() {
                 GlobalScope.launch(Dispatchers.Main) {
-                    methodResult?.success(HashMap<String, String>().apply {
-                        put("status", "complete")
-                    })
+                    methodResult?.let{
+                        val map = HashMap<String, String>().apply {
+                            put("status", "complete")
+                        }
+                        it.success(map)
+                        methodResult = null
+                    }
                 }
             }
 
